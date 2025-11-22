@@ -2,12 +2,23 @@ import React, { useState } from 'react'
 import './App.css'
 
 function App() {
+  // Detect browser/system language on first load
+  const getDefaultLanguage = () => {
+    const browserLang = navigator.language || navigator.userLanguage || 'en'
+    // Check if browser language is Indonesian
+    if (browserLang.startsWith('id') || browserLang.includes('id-ID') || browserLang.includes('id_ID')) {
+      return 'id'
+    }
+    // Default to Indonesian since user prefers Indonesian
+    return 'id'
+  }
+
   const [selectedView, setSelectedView] = useState(null) // null, 'boy', or 'girl'
   const [boyText, setBoyText] = useState('')
   const [girlText, setGirlText] = useState('')
   const [boyStyle, setBoyStyle] = useState(null)
   const [girlStyle, setGirlStyle] = useState(null)
-  const [preferredLanguage, setPreferredLanguage] = useState(null) // 'id' or 'en' or null
+  const [preferredLanguage, setPreferredLanguage] = useState(getDefaultLanguage()) // Default to Indonesian
 
   const handleBoyClick = () => {
     setSelectedView('boy')
@@ -201,18 +212,15 @@ function App() {
     // Always detect language from user's current text first
     let detectedLang = detectLanguage(currentText)
     
-    // If we detected a language, save it as preference
+    // If we detected a language from text, use it and save as preference
     if (detectedLang) {
       setPreferredLanguage(detectedLang)
-    } else if (preferredLanguage) {
-      // If no text to detect from, use the previously detected language preference
-      detectedLang = preferredLanguage
     } else {
-      // If no preference and no text, default to English (but this should be rare)
-      detectedLang = 'en'
+      // If no text to detect from, use the preferred language (defaults to Indonesian)
+      detectedLang = preferredLanguage || 'id' // Always default to Indonesian, not English
     }
     
-    // Generate text in the detected/preferred language
+    // Generate text in the detected/preferred language (Indonesian by default)
     const generatedText = generateText(styleId, isBoy, detectedLang)
     
     if (isBoy) {
