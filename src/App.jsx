@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
@@ -25,6 +25,76 @@ function App() {
     { id: 'joke', label: 'Joke/Teasing (Candaan)' },
     { id: 'casual', label: 'Casual/Everyday Language (Bahasa Sehari-hari)' }
   ]
+
+  // Generate text based on style and gender
+  const generateText = (style, isBoy) => {
+    if (!style) return ''
+
+    const boyFormal = [
+      "I am pleased to share this moment with you all. Thank you for being part of my journey.",
+      "I would like to express my gratitude for the wonderful experiences we've shared together.",
+      "It is with great pleasure that I share this update with my valued connections and friends."
+    ]
+
+    const boyJoke = [
+      "Why did I post this? Because I can! 😂 Life's too short to not share the good moments.",
+      "Plot twist: I actually have no idea what I'm doing, but here we are! 😎",
+      "Warning: This post may contain traces of awesomeness. Proceed with caution! 😄"
+    ]
+
+    const boyCasual = [
+      "Just living my best life! Hope everyone's doing great out there.",
+      "Another day, another adventure. Can't complain!",
+      "Life's good when you're surrounded by good vibes and good people."
+    ]
+
+    const girlFormal = [
+      "I am delighted to share this special moment with all of you. Thank you for your continued support.",
+      "I would like to take this opportunity to express my appreciation for the wonderful people in my life.",
+      "It brings me great joy to share this update with my dear friends and family."
+    ]
+
+    const girlJoke = [
+      "Plot twist: I'm actually a professional at looking like I know what I'm doing! 😂✨",
+      "Why be normal when you can be fabulous? Just kidding... or am I? 😉",
+      "Warning: This post contains 100% pure sass and zero regrets! 💅😂"
+    ]
+
+    const girlCasual = [
+      "Living my best life, one day at a time! ✨ Hope everyone's having a great day!",
+      "Just vibing and enjoying the little moments. Life's beautiful! 💕",
+      "Another day, another reason to smile. Grateful for everything! 🌸"
+    ]
+
+    let options = []
+    if (isBoy) {
+      if (style === 'formal') options = boyFormal
+      else if (style === 'joke') options = boyJoke
+      else if (style === 'casual') options = boyCasual
+    } else {
+      if (style === 'formal') options = girlFormal
+      else if (style === 'joke') options = girlJoke
+      else if (style === 'casual') options = girlCasual
+    }
+
+    if (options.length > 0) {
+      return options[Math.floor(Math.random() * options.length)]
+    }
+    return ''
+  }
+
+  // Auto-generate text when style changes
+  useEffect(() => {
+    if (boyStyle) {
+      setBoyText(generateText(boyStyle, true))
+    }
+  }, [boyStyle])
+
+  useEffect(() => {
+    if (girlStyle) {
+      setGirlText(generateText(girlStyle, false))
+    }
+  }, [girlStyle])
 
   const renderContentScreen = (isBoy) => {
     const text = isBoy ? boyText : girlText
@@ -60,7 +130,10 @@ function App() {
                   <button
                     key={styleOption.id}
                     className={`style-button ${style === styleOption.id ? 'active' : ''}`}
-                    onClick={() => setStyle(styleOption.id)}
+                    onClick={() => {
+                      setStyle(styleOption.id)
+                      // Text will be auto-generated via useEffect
+                    }}
                   >
                     {styleOption.label}
                   </button>
