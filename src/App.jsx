@@ -38,64 +38,102 @@ function App() {
     { id: 'casual', label: 'Casual/Everyday Language (Bahasa Sehari-hari)' }
   ]
 
-  // Detect language from text (Indonesian or English)
+  // Detect language from text (Indonesian or English) - Smart detection that ALWAYS follows user input
   const detectLanguage = (text) => {
-    if (!text || text.trim().length === 0) return null // Return null if empty, don't default to English
-    
-    const indonesianWords = [
-      'yang', 'dan', 'atau', 'dengan', 'untuk', 'dari', 'ini', 'itu', 'adalah', 
-      'akan', 'sudah', 'belum', 'tidak', 'bukan', 'saya', 'kamu', 'dia', 'kita',
-      'mereka', 'di', 'ke', 'pada', 'oleh', 'juga', 'saja', 'hanya',
-      'bisa', 'dapat', 'harus', 'perlu', 'mau', 'ingin', 'lagi', 'masih',
-      'terima', 'kasih', 'tolong', 'maaf', 'permisi', 'selamat', 'salam',
-      'aku', 'engkau', 'kalian', 'kami', 'mereka', 'ini', 'itu',
-      'ada', 'adalah', 'akan', 'sudah', 'belum', 'pernah',
-      'nggak', 'gak', 'enggak', 'ga', 'ngga', 'ndak',
-      'banget', 'banget', 'sih', 'dong', 'kok', 'nih', 'deh',
-      'gimana', 'gimana', 'kenapa', 'apa', 'siapa', 'dimana', 'kapan',
-      'terima kasih', 'makasih', 'thanks', 'tolong', 'minta',
-      'cantik', 'ganteng', 'bagus', 'keren', 'mantap', 'asik', 'asyik'
-    ]
-    
-    // Check for Indonesian-specific patterns
-    const indonesianPatterns = [
-      /\b(nggak|gak|enggak|ga|ngga|ndak)\b/i, // Negation
-      /\b(banget|sih|dong|kok|nih|deh)\b/i, // Particles
-      /\b(gimana|kenapa|dimana|kapan)\b/i, // Question words
-      /\b(makasih|terima kasih)\b/i, // Thanks
-      /\b(cantik|ganteng|bagus|keren|mantap|asik|asyik)\b/i, // Common adjectives
-    ]
+    if (!text || text.trim().length === 0) return null
     
     const lowerText = text.toLowerCase().trim()
     const words = lowerText.split(/\s+/).filter(w => w.length > 0)
     
     if (words.length === 0) return null
     
-    // Check for Indonesian patterns first (more reliable)
+    // Comprehensive Indonesian word list
+    const indonesianWords = new Set([
+      // Pronouns
+      'saya', 'aku', 'kamu', 'engkau', 'dia', 'ia', 'kita', 'kami', 'kalian', 'mereka',
+      // Common words
+      'yang', 'dan', 'atau', 'dengan', 'untuk', 'dari', 'ini', 'itu', 'adalah', 
+      'akan', 'sudah', 'belum', 'tidak', 'bukan', 'di', 'ke', 'pada', 'oleh', 
+      'juga', 'saja', 'hanya', 'bisa', 'dapat', 'harus', 'perlu', 'mau', 'ingin', 
+      'lagi', 'masih', 'pernah', 'ada', 'jadi', 'akan', 'sudah',
+      // Negation (very common in Indonesian)
+      'nggak', 'gak', 'enggak', 'ga', 'ngga', 'ndak', 'tak', 'tidak',
+      // Particles (very Indonesian-specific)
+      'banget', 'sih', 'dong', 'kok', 'nih', 'deh', 'loh', 'dah', 'kan',
+      // Question words
+      'gimana', 'bagaimana', 'kenapa', 'mengapa', 'apa', 'siapa', 'dimana', 'dimana', 
+      'kapan', 'kapan', 'berapa', 'mana',
+      // Common phrases
+      'terima kasih', 'makasih', 'tolong', 'maaf', 'permisi', 'selamat', 'salam',
+      // Adjectives (common in captions)
+      'cantik', 'ganteng', 'bagus', 'keren', 'mantap', 'asik', 'asyik', 'keren',
+      'bagus', 'indah', 'menarik', 'seru', 'asyik',
+      // Verbs
+      'minta', 'mau', 'ingin', 'perlu', 'harus', 'bisa', 'dapat',
+      // More common words
+      'kalau', 'jika', 'karena', 'jadi', 'tapi', 'tetapi', 'namun',
+      'sampai', 'hingga', 'sambil', 'selama', 'sebelum', 'sesudah',
+      // Numbers (Indonesian style)
+      'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh'
+    ])
+    
+    // Indonesian-specific patterns (very reliable indicators)
+    const indonesianPatterns = [
+      /\b(nggak|gak|enggak|ga|ngga|ndak|tak)\b/i, // Negation
+      /\b(banget|sih|dong|kok|nih|deh|loh|dah|kan)\b/i, // Particles
+      /\b(gimana|bagaimana|kenapa|mengapa|dimana|kapan|berapa)\b/i, // Question words
+      /\b(makasih|terima kasih|tolong|maaf)\b/i, // Common phrases
+      /\b(cantik|ganteng|bagus|keren|mantap|asik|asyik)\b/i, // Adjectives
+      /\b(saya|aku|kamu|dia|kita|kami|kalian|mereka)\b/i, // Pronouns
+    ]
+    
+    // Check patterns first (most reliable)
     for (const pattern of indonesianPatterns) {
       if (pattern.test(lowerText)) {
-        return 'id'
+        return 'id' // Definitely Indonesian
       }
     }
     
-    // Count Indonesian words
+    // Check for Indonesian words
     let indonesianCount = 0
+    let totalWords = 0
+    
     for (const word of words) {
-      // Remove punctuation for comparison
-      const cleanWord = word.replace(/[.,!?;:]/g, '')
-      if (indonesianWords.includes(cleanWord)) {
-        indonesianCount++
+      const cleanWord = word.replace(/[.,!?;:()\[\]{}'"]/g, '').toLowerCase()
+      if (cleanWord.length > 0) {
+        totalWords++
+        if (indonesianWords.has(cleanWord)) {
+          indonesianCount++
+        }
       }
     }
     
-    // Very sensitive detection: if ANY Indonesian word or pattern found, it's Indonesian
-    // This ensures we always follow the user's language choice
+    // If ANY Indonesian word found, it's Indonesian (very sensitive)
     if (indonesianCount > 0) {
       return 'id'
     }
     
-    // Default to English if no Indonesian detected
-    return 'en'
+    // Check for common English words to confirm it's English
+    const commonEnglishWords = ['the', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 
+                                'do', 'does', 'did', 'will', 'would', 'could', 'should', 'can', 'may', 'might',
+                                'this', 'that', 'these', 'those', 'a', 'an', 'and', 'or', 'but', 'if', 'when',
+                                'where', 'what', 'who', 'why', 'how', 'i', 'you', 'he', 'she', 'it', 'we', 'they']
+    
+    let englishCount = 0
+    for (const word of words) {
+      const cleanWord = word.replace(/[.,!?;:()\[\]{}'"]/g, '').toLowerCase()
+      if (commonEnglishWords.includes(cleanWord)) {
+        englishCount++
+      }
+    }
+    
+    // If has English words and no Indonesian words, it's English
+    if (englishCount > 0 && indonesianCount === 0) {
+      return 'en'
+    }
+    
+    // Default: if we can't tell, assume Indonesian (since user prefers Indonesian)
+    return 'id'
   }
 
   // Generate text based on style, gender, and language
@@ -209,18 +247,20 @@ function App() {
 
 
   const handleStyleClick = (styleId, currentText, isBoy) => {
-    // Always detect language from user's current text first
+    // ALWAYS detect language from the CURRENT text the user has typed
+    // This is the most important - we MUST follow what user actually typed
     let detectedLang = detectLanguage(currentText)
     
-    // If we detected a language from text, use it and save as preference
+    // If we detected language from current text, use it immediately
     if (detectedLang) {
-      setPreferredLanguage(detectedLang)
+      setPreferredLanguage(detectedLang) // Save it
     } else {
-      // If no text to detect from, use the preferred language (defaults to Indonesian)
-      detectedLang = preferredLanguage || 'id' // Always default to Indonesian, not English
+      // If no text to detect from, use saved preference (which was set when user typed)
+      // If no preference exists, default to Indonesian
+      detectedLang = preferredLanguage || 'id'
     }
     
-    // Generate text in the detected/preferred language (Indonesian by default)
+    // Generate text in the language we detected from user's input
     const generatedText = generateText(styleId, isBoy, detectedLang)
     
     if (isBoy) {
@@ -232,7 +272,7 @@ function App() {
     }
   }
   
-  // Also detect language when user types, to remember their preference
+  // Detect and save language preference in real-time as user types
   const handleTextChange = (newText, isBoy) => {
     if (isBoy) {
       setBoyText(newText)
@@ -240,10 +280,11 @@ function App() {
       setGirlText(newText)
     }
     
-    // Update language preference when user types
+    // IMMEDIATELY detect and save language preference when user types
+    // This ensures we always follow what the user is typing
     const detectedLang = detectLanguage(newText)
     if (detectedLang) {
-      setPreferredLanguage(detectedLang)
+      setPreferredLanguage(detectedLang) // Save immediately so next style click uses this language
     }
   }
 
