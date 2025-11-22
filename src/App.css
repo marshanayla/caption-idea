@@ -143,14 +143,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
+  padding-top: 2rem;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  gap: 2rem;
 }
 
 .boy-screen .screen-title {
   font-size: 3.5rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
 }
@@ -160,6 +165,94 @@
   font-weight: 300;
   opacity: 0.95;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Input Section */
+.input-section {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.text-input {
+  width: 100%;
+  padding: 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 1.1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 150px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.text-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Style Section */
+.style-section {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.style-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.style-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.style-button {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.style-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.boy-screen .style-button.active {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  font-weight: 600;
+}
+
+.girl-screen .style-button.active {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+  font-weight: 600;
 }
 
 /* Girl Screen - Vibrant Pink */
@@ -202,14 +295,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
+  padding-top: 2rem;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  gap: 2rem;
 }
 
 .girl-screen .screen-title {
   font-size: 3.5rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
 }
@@ -243,6 +341,20 @@
   .boy-screen .content-screen,
   .girl-screen .content-screen {
     padding: 1.5rem;
+  }
+
+  .style-title {
+    font-size: 1.2rem;
+  }
+
+  .style-button {
+    font-size: 1rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .text-input {
+    font-size: 1rem;
+    padding: 1.25rem;
   }
 }
 
