@@ -7,6 +7,7 @@ function App() {
   const [girlText, setGirlText] = useState('')
   const [boyStyle, setBoyStyle] = useState(null)
   const [girlStyle, setGirlStyle] = useState(null)
+  const [preferredLanguage, setPreferredLanguage] = useState(null) // 'id' or 'en' or null
 
   const handleBoyClick = () => {
     setSelectedView('boy')
@@ -28,33 +29,61 @@ function App() {
 
   // Detect language from text (Indonesian or English)
   const detectLanguage = (text) => {
-    if (!text || text.trim().length === 0) return 'en' // Default to English if empty
+    if (!text || text.trim().length === 0) return null // Return null if empty, don't default to English
     
     const indonesianWords = [
       'yang', 'dan', 'atau', 'dengan', 'untuk', 'dari', 'ini', 'itu', 'adalah', 
       'akan', 'sudah', 'belum', 'tidak', 'bukan', 'saya', 'kamu', 'dia', 'kita',
-      'mereka', 'ini', 'itu', 'di', 'ke', 'pada', 'oleh', 'juga', 'saja', 'hanya',
-      'bisa', 'dapat', 'harus', 'perlu', 'mau', 'ingin', 'lagi', 'masih', 'sudah',
-      'terima', 'kasih', 'tolong', 'maaf', 'permisi', 'selamat', 'salam'
+      'mereka', 'di', 'ke', 'pada', 'oleh', 'juga', 'saja', 'hanya',
+      'bisa', 'dapat', 'harus', 'perlu', 'mau', 'ingin', 'lagi', 'masih',
+      'terima', 'kasih', 'tolong', 'maaf', 'permisi', 'selamat', 'salam',
+      'aku', 'engkau', 'kalian', 'kami', 'mereka', 'ini', 'itu',
+      'ada', 'adalah', 'akan', 'sudah', 'belum', 'pernah',
+      'nggak', 'gak', 'enggak', 'ga', 'ngga', 'ndak',
+      'banget', 'banget', 'sih', 'dong', 'kok', 'nih', 'deh',
+      'gimana', 'gimana', 'kenapa', 'apa', 'siapa', 'dimana', 'kapan',
+      'terima kasih', 'makasih', 'thanks', 'tolong', 'minta',
+      'cantik', 'ganteng', 'bagus', 'keren', 'mantap', 'asik', 'asyik'
     ]
     
-    const lowerText = text.toLowerCase()
-    const words = lowerText.split(/\s+/)
+    // Check for Indonesian-specific patterns
+    const indonesianPatterns = [
+      /\b(nggak|gak|enggak|ga|ngga|ndak)\b/i, // Negation
+      /\b(banget|sih|dong|kok|nih|deh)\b/i, // Particles
+      /\b(gimana|kenapa|dimana|kapan)\b/i, // Question words
+      /\b(makasih|terima kasih)\b/i, // Thanks
+      /\b(cantik|ganteng|bagus|keren|mantap|asik|asyik)\b/i, // Common adjectives
+    ]
+    
+    const lowerText = text.toLowerCase().trim()
+    const words = lowerText.split(/\s+/).filter(w => w.length > 0)
+    
+    if (words.length === 0) return null
+    
+    // Check for Indonesian patterns first (more reliable)
+    for (const pattern of indonesianPatterns) {
+      if (pattern.test(lowerText)) {
+        return 'id'
+      }
+    }
     
     // Count Indonesian words
     let indonesianCount = 0
     for (const word of words) {
-      if (indonesianWords.includes(word)) {
+      // Remove punctuation for comparison
+      const cleanWord = word.replace(/[.,!?;:]/g, '')
+      if (indonesianWords.includes(cleanWord)) {
         indonesianCount++
       }
     }
     
-    // If more than 20% of words are Indonesian, consider it Indonesian
-    // Or if text contains common Indonesian patterns
-    if (indonesianCount > 0 && (indonesianCount / words.length > 0.2 || words.length < 5)) {
+    // Very sensitive detection: if ANY Indonesian word or pattern found, it's Indonesian
+    // This ensures we always follow the user's language choice
+    if (indonesianCount > 0) {
       return 'id'
     }
     
+    // Default to English if no Indonesian detected
     return 'en'
   }
 
@@ -169,7 +198,21 @@ function App() {
 
 
   const handleStyleClick = (styleId, currentText, isBoy) => {
-    const detectedLang = detectLanguage(currentText)
+    // Always detect language from user's current text first
+    let detectedLang = detectLanguage(currentText)
+    
+    // If we detected a language, save it as preference
+    if (detectedLang) {
+      setPreferredLanguage(detectedLang)
+    } else if (preferredLanguage) {
+      // If no text to detect from, use the previously detected language preference
+      detectedLang = preferredLanguage
+    } else {
+      // If no preference and no text, default to English (but this should be rare)
+      detectedLang = 'en'
+    }
+    
+    // Generate text in the detected/preferred language
     const generatedText = generateText(styleId, isBoy, detectedLang)
     
     if (isBoy) {
@@ -178,6 +221,21 @@ function App() {
     } else {
       setGirlStyle(styleId)
       setGirlText(generatedText)
+    }
+  }
+  
+  // Also detect language when user types, to remember their preference
+  const handleTextChange = (newText, isBoy) => {
+    if (isBoy) {
+      setBoyText(newText)
+    } else {
+      setGirlText(newText)
+    }
+    
+    // Update language preference when user types
+    const detectedLang = detectLanguage(newText)
+    if (detectedLang) {
+      setPreferredLanguage(detectedLang)
     }
   }
 
@@ -202,7 +260,7 @@ function App() {
                 className="text-input"
                 placeholder="Enter your caption text here..."
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => handleTextChange(e.target.value, isBoy)}
                 rows={6}
               />
             </div>
