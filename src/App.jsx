@@ -1,15 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './App.css'
 
 function App() {
+  const [selectedView, setSelectedView] = useState(null) // null, 'boy', or 'girl'
+
   const handleBoyClick = () => {
-    console.log('Boy selected')
-    // TODO: Navigate to boy captions
+    setSelectedView('boy')
   }
 
   const handleGirlClick = () => {
-    console.log('Girl selected')
-    // TODO: Navigate to girl captions
+    setSelectedView('girl')
+  }
+
+  const handleBack = () => {
+    setSelectedView(null)
+  }
+
+  if (selectedView === 'boy') {
+    return (
+      <div className="app boy-screen">
+        <div className="content-screen">
+          <button className="back-button" onClick={handleBack}>
+            ← Back
+          </button>
+          <div className="screen-content">
+            <h1 className="screen-title">Boy Captions</h1>
+            <p className="screen-subtitle">Content coming soon...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (selectedView === 'girl') {
+    return (
+      <div className="app girl-screen">
+        <div className="content-screen">
+          <button className="back-button" onClick={handleBack}>
+            ← Back
+          </button>
+          <div className="screen-content">
+            <h1 className="screen-title">Girl Captions</h1>
+            <p className="screen-subtitle">Content coming soon...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

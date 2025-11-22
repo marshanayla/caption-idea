@@ -103,6 +103,124 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Boy Screen - Vibrant Blue */
+.boy-screen {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+  min-height: 100vh;
+}
+
+.boy-screen .content-screen {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  color: white;
+}
+
+.boy-screen .back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+  backdrop-filter: blur(10px);
+}
+
+.boy-screen .back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-5px);
+}
+
+.boy-screen .screen-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.boy-screen .screen-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.boy-screen .screen-subtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Girl Screen - Vibrant Pink */
+.girl-screen {
+  background: linear-gradient(135deg, #be185d 0%, #db2777 50%, #ec4899 100%);
+  min-height: 100vh;
+}
+
+.girl-screen .content-screen {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  color: white;
+}
+
+.girl-screen .back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+  backdrop-filter: blur(10px);
+}
+
+.girl-screen .back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-5px);
+}
+
+.girl-screen .screen-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.girl-screen .screen-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.girl-screen .screen-subtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 768px) {
   .choice-title {
     font-size: 3rem;
@@ -110,6 +228,21 @@
   
   .choice-subtitle {
     font-size: 1rem;
+  }
+
+  .boy-screen .screen-title,
+  .girl-screen .screen-title {
+    font-size: 2.5rem;
+  }
+
+  .boy-screen .screen-subtitle,
+  .girl-screen .screen-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .boy-screen .content-screen,
+  .girl-screen .content-screen {
+    padding: 1.5rem;
   }
 }
 
